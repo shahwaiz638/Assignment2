@@ -4,7 +4,8 @@ pragma solidity ^0.8.0;
 contract PromotionsAndDiscounts {
     address public owner;
     mapping(address => uint256) public userDiscounts;
-    //OrderProcessingContract public orderContract;
+    mapping(address => uint256) public finalDiscountAmount;
+    OrderProcessingContract public orderContract;
 
     event PromotionApplied(address indexed user, uint256 discountPercentage);
 
@@ -13,9 +14,9 @@ contract PromotionsAndDiscounts {
         _;
     }
 
-    constructor() /*address _orderContractAddress*/ {
+    constructor(address _orderContractAddress) {
         owner = msg.sender;
-        //orderContract = OrderProcessingContract(_orderContractAddress);
+        orderContract = OrderProcessingContract(_orderContractAddress);
     }
 
     function applyPromotion(
@@ -26,15 +27,21 @@ contract PromotionsAndDiscounts {
         require(discountPercentage > 0, "Invalid discount percentage");
         userDiscounts[user] = discountPercentage;
 
-        //uint256 discountAmount = calculateDiscount(orderAmount);
+        uint256 orderAmount = orderContract.getTotalPrice(user);
+
+        finalDiscountAmount[user] = calculateDiscount(user, orderAmount);
         emit PromotionApplied(user, discountPercentage);
     }
 
-    function calculateDiscountedAmount(
-        uint256 originalAmount,
-        address user
-    ) external view returns (uint256) {
+    function calculateDiscount(
+        address user,
+        uint256 originalAmount
+    ) internal view returns (uint256) {
         uint256 discountPercentage = userDiscounts[user];
         return (originalAmount * (100 - discountPercentage)) / 100;
+    }
+
+    function getDiscountAmount(address user) external view returns (uint256) {
+        return finalDiscountAmount[user];
     }
 }
