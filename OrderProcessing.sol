@@ -3,7 +3,9 @@ pragma solidity ^0.8.0;
 
 contract OrderProcessing {
     address public owner;
+    //uint256 totalValue;
     MenuManagement public menuContract;
+    mapping(address => uint256) bill;
 
     event OrderPlaced(
         address indexed user,
@@ -18,9 +20,10 @@ contract OrderProcessing {
     }
 
     function placeOrder(
+        address user,
         uint256[] memory itemId,
         uint256[] memory quantities
-    ) external view returns (uint256) {
+    ) external {
         require(itemId.length == quantities.length, "Invalid input lengths");
 
         uint256 totalAmount = 0;
@@ -34,8 +37,12 @@ contract OrderProcessing {
             menuContract.menu(itemId[i]).availabe -= quantities[i];
         }
 
-        emit OrderPlaced(msg.sender, itemIds, quantities, totalAmount);
+        bill[user] += totalAmount;
+        //totalValue = totalAmount;
+        emit OrderPlaced(msg.sender, itemId, quantities, totalAmount);
+    }
 
-        return totalAmount;
+    function getTotalPrice(address user) external view returns (uint256) {
+        return bill[user];
     }
 }
