@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
+
+import "./OrderProcessing.sol";
 
 contract PromotionsAndDiscounts {
     address public owner;
     mapping(address => uint256) public userDiscounts;
     mapping(address => uint256) public finalDiscountAmount;
-    OrderProcessingContract public orderContract;
+    OrderProcessing public orderContract;
 
     event PromotionApplied(address indexed user, uint256 discountPercentage);
 
@@ -16,7 +18,7 @@ contract PromotionsAndDiscounts {
 
     constructor(address _orderContractAddress) {
         owner = msg.sender;
-        orderContract = OrderProcessingContract(_orderContractAddress);
+        orderContract = OrderProcessing(_orderContractAddress);
     }
 
     function applyPromotion(

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 contract MenuManagement {
     address public owner;
@@ -22,11 +22,13 @@ contract MenuManagement {
         uint256 price,
         uint256 availability
     );
+
     event MenuItemPriceUpdated(
         uint256 itemId,
         string itemName,
         uint256 newPrice
     );
+
     event MenuItemAvailabilityUpdated(
         uint256 itemId,
         string itemName,

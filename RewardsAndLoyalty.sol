@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
+
+import "./OrderProcessing.sol";
 
 contract RewardsAndLoyalty {
     address public owner;
     mapping(address => uint256) LoyaltyPoints;
     uint256 PointsPerTransaction = 10;
-    OrderProcessingContract public orderContract;
+    OrderProcessing public orderContract;
 
     event LoyaltyTokensCredited(address indexed user, uint256 amount);
     event LoyaltyPointsUsed(address indexed user, uint256 amount);
@@ -17,7 +19,7 @@ contract RewardsAndLoyalty {
 
     constructor(address _orderContractAddress) {
         owner = msg.sender;
-        orderContract = OrderProcessingContract(_orderContractAddress);
+        orderContract = OrderProcessing(_orderContractAddress);
     }
 
     function creditLoyaltyTokens(address user) external onlyOwner {

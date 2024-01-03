@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./PromotionsAndDiscounts.sol";
 
-contract PaymentContract is ERC20 {
+contract Payment is ERC20 {
     address public owner; // Admin
     address public cafe;
-    PromotionsAndDiscountsContract public PromotionContract;
+    PromotionsAndDiscounts public PromotionContract;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the owner");
@@ -21,7 +22,7 @@ contract PaymentContract is ERC20 {
     constructor(address _PromotionContractAddress) ERC20("FastCoin", "FC") {
         owner = msg.sender;
         _mint(owner, 1000000 * 10 ** decimals()); // Mint initial supply
-        PromotionContract = PromotionsAndDiscountsContract(
+        PromotionContract = PromotionsAndDiscounts(
             _PromotionContractAddress
         );
     }
@@ -43,11 +44,11 @@ contract PaymentContract is ERC20 {
             amount > PromotionContract.getDiscountAmount(msg.sender),
             "Not enough amount sent"
         );
-        require(balanceOf(msg.value) > amount, "Insufficent funds in account");
+        require(msg.value > amount, "Insufficient funds in account");
         _transfer(msg.sender, cafe, amount);
     }
 
-    function refundPayment(address user, unit256 amount) external onlyCafe {
+    function refundPayment(address user, uint256 amount) external onlyCafe {
         _transfer(cafe, user, amount);
     }
 }

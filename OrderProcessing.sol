@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
+
+import "./MenuManagement.sol"; 
 
 contract OrderProcessing {
     address public owner;
-    //uint256 totalValue;
-    MenuManagement public menuContract;
+    MenuManagement public menuContract; 
     mapping(address => uint256) bill;
 
     event OrderPlaced(
@@ -16,7 +17,7 @@ contract OrderProcessing {
 
     constructor(address _menuContract) {
         owner = msg.sender;
-        menuContract = MenuManagment(_menuContract);
+        menuContract = MenuManagement(_menuContract); 
     }
 
     function placeOrder(
@@ -33,12 +34,12 @@ contract OrderProcessing {
                 menuContract.checkAvailability(itemId[i]),
                 "Item not available"
             );
-            totalAmount += menuContract.menu(itemId[i]).price * quantities[i];
-            menuContract.menu(itemId[i]).availabe -= quantities[i];
+            (string memory itemName, uint256 itemPrice, uint256 itemAvailabilities) = menuContract.viewMenuItem(itemId[i]);
+            totalAmount += itemPrice * quantities[i];
+            menuContract.updateAvailability(itemId[i], itemName, quantities[i]);
         }
 
         bill[user] += totalAmount;
-        //totalValue = totalAmount;
         emit OrderPlaced(msg.sender, itemId, quantities, totalAmount);
     }
 
