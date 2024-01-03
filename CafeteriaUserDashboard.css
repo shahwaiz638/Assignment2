@@ -1,0 +1,39 @@
+/* CafeteriaStaffDashboard.css */
+.dashboard {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #124082;
+    padding: 20px;
+    border-radius: 5px;
+    border-color: black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button {
+    background-color: #3498db; /* Blue color */
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #2476ad; /* Darker blue on hover */
+  }
+  
+  /* Add a new class for blue buttons */
+  .blue-button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 15px;
+    border:color(from color srgb r g b);
+    border-radius: 5px;
+    border-color: black;
+    cursor: pointer;
+  }
+  
+  .blue-button:hover {
+    background-color: #2980b9;
+  }
+  
