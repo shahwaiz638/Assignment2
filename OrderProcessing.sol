@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "./MenuManagement.sol"; 
+import "./MenuManagement.sol";
 
 contract OrderProcessing {
     address public owner;
-    MenuManagement public menuContract; 
+    MenuManagement public menuContract;
     mapping(address => uint256) bill;
 
     event OrderPlaced(
@@ -17,33 +17,34 @@ contract OrderProcessing {
 
     constructor(address _menuContract) {
         owner = msg.sender;
-        menuContract = MenuManagement(_menuContract); 
+        menuContract = MenuManagement(_menuContract);
     }
 
-    function placeOrder(
-        address user,
-        uint256[] memory itemId,
-        uint256[] memory quantities
-    ) external {
-        require(itemId.length == quantities.length, "Invalid input lengths");
+    function placeOrder(uint256[] memory itemIds, uint256[] memory quantities) external {
+        require(itemIds.length == quantities.length, "Invalid input lengths");
 
         uint256 totalAmount = 0;
 
-        for (uint256 i = 0; i < itemId.length; i++) {
-            require(
-                menuContract.checkAvailability(itemId[i]),
-                "Item not available"
-            );
-            (string memory itemName, uint256 itemPrice, uint256 itemAvailabilities) = menuContract.viewMenuItem(itemId[i]);
+        for (uint256 i = 0; i < itemIds.length; i++) {
+            require(menuContract.checkAvailability(itemIds[i]), "Item not available");
+            (string memory itemName, uint256 itemPrice, uint256 itemAvailabilities) = menuContract.viewMenuItem(itemIds[i]);
             totalAmount += itemPrice * quantities[i];
-            menuContract.updateAvailability(itemId[i], itemName, quantities[i]);
+            menuContract.updateAvailability(itemIds[i], itemName, quantities[i]);
         }
 
-        bill[user] += totalAmount;
-        emit OrderPlaced(msg.sender, itemId, quantities, totalAmount);
+        bill[msg.sender] += totalAmount;
+        emit OrderPlaced(msg.sender, itemIds, quantities, totalAmount);
     }
 
-    function getTotalPrice(address user) external view returns (uint256) {
-        return bill[user];
+    function getTotalPrice(uint256[] memory itemIds) external view returns (uint256) {
+        uint256 totalPrice = 0;
+
+        for (uint256 i = 0; i < itemIds.length; i++) {
+            require(menuContract.checkAvailability(itemIds[i]), "Item not available");
+            (string memory itemName, uint256 itemPrice, uint256 itemAvailabilities) = menuContract.viewMenuItem(itemIds[i]);
+            totalPrice += itemPrice;
+        }
+
+        return totalPrice;
     }
 }
