@@ -49,31 +49,31 @@ contract MenuManagement {
         string memory itemName,
         uint256 price,
         uint256 available
-    ) external onlyOwner {
+    ) external {
         totalItems++;
         menu[itemId] = MenuItem(itemName, price, available);
         menuItemIds.push(itemId);
-        emit MenuItemAdded(itemId, itemName, price, available);
+        //emit MenuItemAdded(itemId, itemName, price, available);
     }
 
     function updatePrice(
         uint256 itemId,
         string memory itemName,
         uint256 newPrice
-    ) external onlyOwner {
+    ) external  {
         require(menu[itemId].available > 0, "Item not found");
         menu[itemId].price = newPrice;
-        emit MenuItemPriceUpdated(itemId, itemName, newPrice);
+        //emit MenuItemPriceUpdated(itemId, itemName, newPrice);
     }
 
     function updateAvailability(
         uint256 itemId,
         string memory itemName,
         uint256 newAvailability
-    ) external onlyOwner {
+    ) external  {
         require(menu[itemId].available > 0, "Item not found");
         menu[itemId].available = newAvailability;
-        emit MenuItemAvailabilityUpdated(itemId, itemName, newAvailability);
+        //emit MenuItemAvailabilityUpdated(itemId, itemName, newAvailability);
     }
 
     function checkAvailability(uint256 itemId) external view returns (bool) {

@@ -9,8 +9,6 @@ contract PromotionsAndDiscounts {
     mapping(address => uint256) public finalDiscountAmount;
     OrderProcessing public orderContract;
 
-    event PromotionApplied(address indexed user, uint256 discountPercentage);
-
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the owner");
         _;
@@ -21,25 +19,25 @@ contract PromotionsAndDiscounts {
         orderContract = OrderProcessing(_orderContractAddress);
     }
 
-    function applyPromotion(
-        address user,
-        uint256 discountPercentage
-    ) external onlyOwner {
+    function setDiscountPercentage(address user, uint256 discountPercentage) external {
         require(discountPercentage < 100, "Invalid discount percentage");
-        require(discountPercentage > 0, "Invalid discount percentage");
+        require(discountPercentage >= 0, "Invalid discount percentage");
         userDiscounts[user] = discountPercentage;
-
-        uint256 orderAmount = orderContract.getTotalPrice(user);
-
-        finalDiscountAmount[user] = calculateDiscount(user, orderAmount);
-        emit PromotionApplied(user, discountPercentage);
     }
 
-    function calculateDiscount(
-        address user,
-        uint256 originalAmount
-    ) internal view returns (uint256) {
+    function getDiscountPercentage(address user) external view returns (uint256) {
+        return userDiscounts[user];
+    }
+
+    function applyPromotion(address user) external {
         uint256 discountPercentage = userDiscounts[user];
+        require(discountPercentage > 0, "Discount percentage must be greater than 0");
+
+        uint256 orderAmount = orderContract.getTotalPrice();
+        finalDiscountAmount[user] = calculateDiscount(orderAmount, discountPercentage);
+    }
+
+    function calculateDiscount(uint256 originalAmount, uint256 discountPercentage) internal pure returns (uint256) {
         return (originalAmount * (100 - discountPercentage)) / 100;
     }
 

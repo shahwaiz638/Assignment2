@@ -9,6 +9,8 @@ module.exports = async function (deployer) {
   await deployer.deploy(MenuManagement);
 
   // Deploy OrderProcessing contract and link it to MenuManagement
+
+
   await deployer.deploy(OrderProcessing, MenuManagement.address);
 
   // Deploy PromotionsAndDiscounts contract and pass the address of OrderProcessing contract
@@ -16,6 +18,7 @@ module.exports = async function (deployer) {
 
   // Deploy PaymentContract and pass the address of PromotionsAndDiscounts contract
   await deployer.deploy(PaymentContract, PromotionsAndDiscounts.address);
+
 
   // Deploy RewardsAndLoyalty contract and link it to PaymentContract
   await deployer.deploy(RewardsAndLoyalty, PaymentContract.address);

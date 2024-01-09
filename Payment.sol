@@ -14,11 +14,6 @@ contract Payment is ERC20 {
         _;
     }
 
-    modifier onlyCafe() {
-        require(msg.sender == cafe, "Not the cafe");
-        _;
-    }
-
     constructor(address _PromotionContractAddress) ERC20("FastCoin", "FC") {
         owner = msg.sender;
         _mint(owner, 1000000 * 10 ** decimals()); // Mint initial supply
@@ -27,11 +22,7 @@ contract Payment is ERC20 {
         );
     }
 
-    function setCafe(address _cafe) external onlyOwner {
-        cafe = _cafe;
-    }
-
-    function mint(address to, uint256 amount) external onlyOwner {
+    function mint(address to, uint256 amount) external  {
         _mint(to, amount);
     }
 
@@ -48,7 +39,7 @@ contract Payment is ERC20 {
         _transfer(msg.sender, cafe, amount);
     }
 
-    function refundPayment(address user, uint256 amount) external onlyCafe {
+    function refundPayment(address user, uint256 amount) external onlyOwner {
         _transfer(cafe, user, amount);
     }
 }
