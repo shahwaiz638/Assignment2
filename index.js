@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import App from './App';
+import App from './app';
 import CafeteriaStaffDashboard from './CafeteriaStaffDashboard';
 import CafeteriaUserDashboard from './CafeteriaUserDashboard';
 import HomePage from './HomePage'; // Import HomePage component

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CafeteriaStaffDashboard.css';
-import { Cafe_ABI, Cafe_ADDRESS } from './config.js';
+import { Cafe_ABI, Cafe_ADDRESS, Order_ABI, Order_ADDRESS, Promotions_ABI, Promotions_ADDRESS } from './config.js';
 import Web3 from 'web3';
 
 function CafeteriaStaffDashboard() {
@@ -29,6 +29,10 @@ function CafeteriaStaffDashboard() {
   const [updateItemPrice, setUpdateItemPrice] = useState(0);
   const [updateItemAvailability, setUpdateItemAvailability] = useState(0);
   const [action, setAction] = useState('');
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [promotionsContract, setPromotionsContract] = useState(null);
+
+
 
   // Initialize Web3 and contract on component mount
   useEffect(() => {
@@ -36,9 +40,13 @@ function CafeteriaStaffDashboard() {
       try {
         const w3 = new Web3(Web3.givenProvider || 'http://localhost:7545');
         const cafeContract = new w3.eth.Contract(Cafe_ABI, Cafe_ADDRESS);
+        const orderContract = new w3.eth.Contract(Order_ABI, Order_ADDRESS);
+        const promotionsContract = new w3.eth.Contract(Promotions_ABI, Promotions_ADDRESS);
         const accounts = await w3.eth.getAccounts();
         setWeb3(w3);
         setContract(cafeContract);
+        setPromotionsContract(orderContract);
+        setPromotionsContract(promotionsContract);
 
         // Check if the current account is the owner (staff)
         if (1 /* Add logic to check if the current account is staff */) {
@@ -132,7 +140,7 @@ function CafeteriaStaffDashboard() {
       console.error('Error viewing menu item:', error);
     }
   };
-  
+
 
   const handleViewMenu = async () => {
     try {
@@ -148,6 +156,20 @@ function CafeteriaStaffDashboard() {
       console.error('Error viewing menu:', error);
     }
   };
+
+  const handleSetDiscount = async () => {
+    try {
+        // Call the setDiscountPercentage function from the contract
+        const userAddress = (await web3.eth.getAccounts())[5];
+        await promotionsContract.methods.setDiscountPercentage(userAddress, discountPercentage).send({
+            from: (await web3.eth.getAccounts())[0],
+        });
+        // Clear input fields
+        setDiscountPercentage(0);
+    } catch (error) {
+        console.error('Error setting discount:', error);
+    }
+};
 
   return (
     <div className="dashboard">
@@ -273,72 +295,100 @@ function CafeteriaStaffDashboard() {
         </div>
 
         <div>
-        <button
-          className="blue-button"
-          onClick={() => setAction('viewItem')}
-        >
-          View Menu Item
-        </button>{' '}
-        <br />
-        {action === 'viewItem' && (
-          <div>
-            <label>Item ID : </label>
-            <input
-              type="number"
-              value={menuItemDetails.id}
-              onChange={(e) => setMenuItemDetails({ ...menuItemDetails, id: e.target.value })}
-            />
-            &nbsp; &nbsp;
-            <button
-              className="blue-button"
-              onClick={() => handleViewMenuItem(menuItemDetails.id)}
-            >
-              View Item
-            </button>
+          <button
+            className="blue-button"
+            onClick={() => setAction('viewItem')}
+          >
+            View Menu Item
+          </button>{' '}
+          <br />
+          {action === 'viewItem' && (
             <div>
-              <strong>Item Name:</strong> {menuItemDetails.name}
+              <label>Item ID : </label>
+              <input
+                type="number"
+                value={menuItemDetails.id}
+                onChange={(e) => setMenuItemDetails({ ...menuItemDetails, id: e.target.value })}
+              />
+              &nbsp; &nbsp;
+              <button
+                className="blue-button"
+                onClick={() => handleViewMenuItem(menuItemDetails.id)}
+              >
+                View Item
+              </button>
+              <div>
+                <strong>Item Name:</strong> {menuItemDetails.name}
+              </div>
+              <div>
+                <strong>Item Price:</strong> {menuItemDetails.price}
+              </div>
+              <div>
+                <strong>Item Availability:</strong>{' '}
+                {menuItemDetails.available}
+              </div>
             </div>
-            <div>
-              <strong>Item Price:</strong> {menuItemDetails.price}
-            </div>
-            <div>
-              <strong>Item Availability:</strong>{' '}
-              {menuItemDetails.available}
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
         <div>
-  <button
-    className="blue-button"
-    onClick={() => {
-      setAction('viewMenu');
-      handleViewMenu();
-    }}
-  >
-    View Menu
-  </button>{' '}
-    <br />
-    {action === 'viewMenu' && (
-      <div>
-        <div>
-          {/* Display the menu details here */}
-          <strong>Item IDs:</strong> {menuDetails.itemIds.join(', ')}
+          <button
+            className="blue-button"
+            onClick={() => {
+              setAction('viewMenu');
+              handleViewMenu();
+            }}
+          >
+            View Menu
+          </button>{' '}
+          <br />
+          {action === 'viewMenu' && (
+            <div>
+              <div>
+                {/* Display the menu details here */}
+                <strong>Item IDs:</strong> {menuDetails.itemIds.join(', ')}
+              </div>
+              <div>
+                <strong>Item Names:</strong> {menuDetails.itemNames.join(', ')}
+              </div>
+              <div>
+                <strong>Item Prices:</strong> {menuDetails.itemPrices.join(', ')}
+              </div>
+              <div>
+                <strong>Item Availabilities:</strong>{' '}
+                {menuDetails.itemAvailabilities.join(', ')}
+              </div>
+            </div>
+          )}
         </div>
+
         <div>
-          <strong>Item Names:</strong> {menuDetails.itemNames.join(', ')}
+          <button
+              className="blue-button"
+              onClick={() => setAction('setDiscount')}
+          >
+              Set Discount Percentage
+          </button>{' '}
+          <br />
+          {action === 'setDiscount' && (
+              <div>
+                  <label>Discount Percentage : </label>
+                  <input
+                      type="number"
+                      value={discountPercentage}
+                      onChange={(e) => setDiscountPercentage(e.target.value)}
+                  />{' '}
+                  <br />
+                  <button
+                      className="blue-button"
+                      onClick={handleSetDiscount}
+                  >
+                      Set Discount
+                  </button>{' '}
+                  <br /> <br />
+              </div>
+          )}
         </div>
-        <div>
-          <strong>Item Prices:</strong> {menuDetails.itemPrices.join(', ')}
-        </div>
-        <div>
-          <strong>Item Availabilities:</strong>{' '}
-          {menuDetails.itemAvailabilities.join(', ')}
-        </div>
-      </div>
-    )}
-</div>
 
         <div>
           <button className="button" onClick={handleBackToHome}>
