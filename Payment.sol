@@ -16,6 +16,7 @@ contract Payment is ERC20 {
 
     constructor(address _PromotionContractAddress) ERC20("FastCoin", "FC") {
         owner = msg.sender;
+        cafe=msg.sender;
         _mint(owner, 1000000 * 10 ** decimals()); // Mint initial supply
         PromotionContract = PromotionsAndDiscounts(
             _PromotionContractAddress

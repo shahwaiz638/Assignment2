@@ -14,27 +14,35 @@ contract PromotionsAndDiscounts {
         _;
     }
 
+    event LogDebug(string message, uint256 value);
+
     constructor(address _orderContractAddress) {
         owner = msg.sender;
         orderContract = OrderProcessing(_orderContractAddress);
     }
 
-    function setDiscountPercentage(address user, uint256 discountPercentage) external {
-        require(discountPercentage < 100, "Invalid discount percentage");
-        require(discountPercentage >= 0, "Invalid discount percentage");
+    function setDiscountPercentage(address user, uint256 discountPercentage) external onlyOwner {
+        require(discountPercentage <= 100, "Invalid discount percentage");
         userDiscounts[user] = discountPercentage;
     }
-
     function getDiscountPercentage(address user) external view returns (uint256) {
         return userDiscounts[user];
     }
 
-    function applyPromotion(address user) external {
+     function applyPromotion(address user) external {
         uint256 discountPercentage = userDiscounts[user];
+        emit LogDebug("Discount Percentage:", discountPercentage);
+
         require(discountPercentage > 0, "Discount percentage must be greater than 0");
 
-        uint256 orderAmount = orderContract.getTotalPrice();
+        // Access total order amount directly from bill mapping
+        uint256 orderAmount = orderContract.getTotalBillAmount(user);
+        emit LogDebug("Order Amount:", orderAmount);
         finalDiscountAmount[user] = calculateDiscount(orderAmount, discountPercentage);
+
+        // Log values for debugging
+        //console.log("Order Amount:", orderAmount);
+        //console.log("Discount Amount:", finalDiscountAmount[user]);
     }
 
     function calculateDiscount(uint256 originalAmount, uint256 discountPercentage) internal pure returns (uint256) {

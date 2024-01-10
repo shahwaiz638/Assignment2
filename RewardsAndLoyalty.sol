@@ -9,8 +9,8 @@ contract RewardsAndLoyalty {
     uint256 PointsPerTransaction = 10;
     OrderProcessing public orderContract;
 
-    //event LoyaltyTokensCredited(address indexed user, uint256 amount);
-    //event LoyaltyPointsUsed(address indexed user, uint256 amount);
+    event LoyaltyTokensCredited(address indexed user, uint256 amount);
+    event LoyaltyPointsUsed(address indexed user, uint256 amount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the owner");
@@ -28,13 +28,13 @@ contract RewardsAndLoyalty {
         uint256 points = orderAmount * PointsPerTransaction;
         LoyaltyPoints[user] += points;
         //tokenContract.transfer(user, amount);
-        //emit LoyaltyTokensCredited(user, orderAmount);
+        emit LoyaltyTokensCredited(user, orderAmount);
     }
 
     function ExtractPoints(address user, uint256 points) external  {
         require(LoyaltyPoints[user] >= points, "Not enough loyalty points");
         LoyaltyPoints[user] -= points;
-        //emit LoyaltyPointsUsed(user, points);
+        emit LoyaltyPointsUsed(user, points);
     }
 
     function getPoints(address user) public view returns (uint256) {

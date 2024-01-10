@@ -29,15 +29,25 @@ contract OrderProcessing {
             menuContract.checkAvailability(itemId[i]),
             "Item not available"
         );
+        require(
+            menuContract.getAvailability(itemId[i])>quantities[i],
+            "Item not available"
+        );
+        uint256 available=menuContract.getAvailability(itemId[i]);
         (string memory itemName, uint256 itemPrice, uint256 itemAvailabilities) = menuContract.viewMenuItem(itemId[i]);
         totalAmount += itemPrice * quantities[i];
-        menuContract.updateAvailability(itemId[i], itemName, quantities[i]);
+        menuContract.updateAvailability(itemId[i], itemName, available-quantities[i]);
     }
 
     bill[msg.sender] += totalAmount;
     //totalPrice += totalAmount;
     //emit OrderPlaced(msg.sender, itemId, quantities, totalAmount);
 }
+
+    function getTotalBillAmount(address user) external view returns (uint256) {
+        return bill[user];
+    }
+
 
     function getTotalPrice() external view returns (uint256) {
         return bill[msg.sender];
