@@ -33,11 +33,3 @@ The web application supports the following user interactions:
 - **Cafeteria Staff**: Can log in to update the menu items and prices, offer discounts and special promotions.
 - **Cafeteria Users**: Can log in to browse the menu, place orders, make payments using utility tokens, view their loyalty rewards and promotions.
 
-## Project Submission
-The project submission deadline is 06th January 2024. Late submissions or ones sent by email will not be accepted.
-
-## Project Grading
-Each group will have to give a 20-minute demonstration. Each member of the group will be individually assessed based on their contributions. The overall marks of each student will be calculated as follows: (percentage contribution) x (group marks in the project).
-
-## Note
-This project is developed as part of the CS-4049 course at FAST University and is intended for educational purposes only.
