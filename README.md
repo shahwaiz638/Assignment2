@@ -1,6 +1,6 @@
 # Decentralized FAST Cafeteria Shopping System
 
-This repository contains the source code for the Decentralized FAST Cafeteria Shopping System, developed as part of the CS-4049 course project at FAST University.
+This repository contains the source code for the Decentralized FAST Cafeteria Shopping System
 
 ## Group Members
 - Shahwaiz Memon
